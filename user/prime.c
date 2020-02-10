@@ -1,100 +1,43 @@
-#include"kernel/types.h"
-#include"user/user.h"
+#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
 
-void source(int pd[2]);
-void cull(int pd[2], int n, int o);
-void sink(int pd[2]);
+#define R 0
+#define W 1
 
-int main()
+int
+main(int argc, char *argv[])
 {
-	int pid, pd[2];
-	pipe(pd);
-	pid =fork();
-
-	if(pid<0)
-	{
-		printf("fork failed\n");
-		exit();
-	}
-
-	if(pipe(pd)<0)
-	{
-		printf("pipe failed\n");
-	}
-
-	if(pid == 0)
-	{
-		source(pd);
-	}
-	else
-	{
-		sink(pd);
-	}
-
-exit();
-}
-
-void source(int pd[2])//close output of pipe and feeds 2 to 35
-{
-	close(pd[0]);
-	for(int i=2; i<36; i++)
-	{
-		write(pd[1], &i, sizeof(i));
-	}
-	close(pd[1]);
-	return;
-
-}
-
-void cull(int pd[2], int n, int o)
-{
-	int a;
-	close(pd[0]);
-	for(;;)
-	{
-		if(read(o, &a, sizeof(a))==0)
-		{
-			close(pd[1]);
-			return;
-		}
-		if((a%n==0))
-		{
-			write(pd[1], &a, sizeof(a));
-		}
-}
-
-
-void sink(int pd[2])//read from pipe and 
-{
-	close(pd[1]);
-	int n, pid, newpd[2];
-	
-	n = read(pd[0], &n, sizeof(n));
-	if(n==0)
-	{
-		printf("pipe empty\n");
-	}
-	else
-	{
-		printf("prime: %d", n);
-		
-		if(pipe(pd)<0)
-		{
-			printf("sink pipe failed\n");
-			exit();
-		}
-		else
-		{
-			pid=fork();
-			if(pid==0)
-			{
-				cull(n, pd[0], newpd);
-			}
-			else
-			{
-				sink(newpd);
-			}
-		}
-
-	
+  int numbers[100], cnt = 0, i;
+  int fd[2];
+  for (i = 2; i <= 35; i++) {
+    numbers[cnt++] = i;
+  }
+  while (cnt > 0) {
+    pipe(fd);
+    if (fork() == 0) {
+      int prime, this_prime = 0;
+      close(fd[W]);
+      cnt = -1;
+      while (read(fd[R], &prime, sizeof(prime)) != 0) {
+        if (cnt == -1) {
+          this_prime = prime;
+          cnt = 0;
+        } else {
+          if (prime % this_prime != 0) numbers[cnt++] = prime;
+        }
+      }
+      printf("prime %d\n", this_prime);
+      close(fd[R]);
+    } else {
+      close(fd[R]);
+      for (i = 0; i < cnt; i++) {
+        write(fd[W], &numbers[i], sizeof(numbers[0]));
+      }
+      close(fd[W]);
+      wait();
+      break;
+    }
+  }
+  exit();
 }

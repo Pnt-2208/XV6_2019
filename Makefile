@@ -144,8 +144,8 @@ UPROGS=\
 	$U/_find\
 	$U/_xargs\
 	$U/_pingpong\
-	$U/_prime\	
-
+	$U/_prime\
+	
 fs.img: mkfs/mkfs README user/xargstest.sh $(UPROGS)
 	mkfs/mkfs fs.img README user/xargstest.sh $(UPROGS)
 
