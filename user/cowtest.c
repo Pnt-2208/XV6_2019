@@ -12,7 +12,7 @@
 void
 simpletest()
 {
-  uint64 phys_size = PHYSTOP - KERNBASE;
+  uint64 phys_size = PHYSTOP - KERNBASE;    //stack to kernbase
   int sz = (phys_size / 3) * 2;
 
   printf("simple: ");
