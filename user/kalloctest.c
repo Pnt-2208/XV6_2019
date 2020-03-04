@@ -80,11 +80,15 @@ void test1()
       close(fds[0]);
       for(i = 0; i < N; i++) {
         a = sbrk(PGSIZE);
+        if((uint64)a ==-1){printf("Hi\n");
+        exit(0);}
         *(int *)(a+4) = 1;
         if (write(fds[1], "x", 1) != 1) {
           printf("write failed");
           exit(-1);
-        }
+          }
+        //else printf("Hi\n");
+        
       }
       exit(0);
     } else {
