@@ -114,10 +114,7 @@ sys_sigalarm(void){
 
 uint64
 sys_sigreturn(void){
- //struct proc* p = myproc();
-   // if (myproc()->tick!= -1) 
-     // return -1;
-    myproc()->tick = 0;
-    memmove(myproc()->tf, &myproc()->alarm_tf, sizeof(myproc()->alarm_tf));
+    myproc()->tick = 0;//n
+    memmove(myproc()->tf, &myproc()->alarm_tf, sizeof(myproc()->alarm_tf));//gives control back to main function
   return 0;
 }

@@ -108,5 +108,4 @@ struct proc {
   int count;
   uint64 handler;
   struct trapframe alarm_tf;
-  
 };
